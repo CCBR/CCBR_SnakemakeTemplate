@@ -168,7 +168,7 @@ function run() {
 
   cat > ${WORKDIR}/submit_script.sbatch << EOF
 #!/bin/bash
-#SBATCH --job-name="circRNA"
+#SBATCH --job-name="insert_jobname_here"
 #SBATCH --mem=10g
 #SBATCH --partition="ccr,norm"
 #SBATCH --time=96:00:00
@@ -180,7 +180,7 @@ module load singularity
 
 cd \$SLURM_SUBMIT_DIR
 
-snakemake -s ${PIPELINE_HOME}/circRNADetection.snakefile \
+snakemake -s $SNAKEFILE \
 --directory $WORKDIR \
 --use-singularity \
 --singularity-args " -B ${PIPELINE_HOME}:${PIPELINE_HOME} -B ${WORKDIR}:${WORKDIR} -B /data/Ziegelbauer_lab/resources/:/data/Ziegelbauer_lab/resources/" \
@@ -197,7 +197,7 @@ snakemake -s ${PIPELINE_HOME}/circRNADetection.snakefile \
 2>&1|tee ${WORKDIR}/snakemake.log
 
 if [ "\$?" -eq "0" ];then
-  snakemake -s ${PIPELINE_HOME}/circRNADetection.snakefile \
+  snakemake -s $SNAKEFILE \
   --directory $WORKDIR \
   --report ${WORKDIR}/runslurm_snakemake_report.html \
   --configfile ${WORKDIR}/config.yaml 
@@ -211,7 +211,7 @@ EOF
 
   else
 
-snakemake $1 -s ${PIPELINE_HOME}/circRNADetection.snakefile \
+snakemake $1 -s ${SNAKEFILE} \
 --directory $WORKDIR \
 --use-envmodules \
 --printshellcmds \
