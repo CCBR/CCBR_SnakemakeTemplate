@@ -15,7 +15,7 @@ module purge
 function get_git_commitid_tag() {
   cd $1
   gid=$(git rev-parse HEAD)
-  tag=$(git describe --tags $gid)
+  tag=$(git describe --tags $gid 2>/dev/null)
   echo -ne "$gid\t$tag"
 }
 
