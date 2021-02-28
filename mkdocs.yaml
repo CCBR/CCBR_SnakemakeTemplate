@@ -1,0 +1,36 @@
+# Project Information
+site_name: circRNA DAQ (Detection/Annotation/Quantification)
+site_author: Vishal Koparde, Ph.D.
+# Repository
+repo_name: kopardev/circRNA
+repo_url: https://github.com/kopardev/circRNA
+
+# Copyright
+copyright: Copyright &copy; 2021 CCBR
+
+# Configuration
+theme:
+  name: material
+  palette:
+    scheme: default
+
+plugins:
+  - search
+
+# Customization
+extra:
+  social:
+    - icon: fontawesome/solid/users
+      link: http://bioinformatics.cancer.gov
+    - icon: fontawesome/brands/github
+      link: https://github.com/CCBR
+    - icon: fontawesome/brands/docker
+      link: https://hub.docker.com/orgs/nciccbr/repositories
+
+# Page Tree
+nav:
+  - Home: index.md
+  - Flowchart: flowchart.md
+  - Tutorial: tutorial.md
+  - References: references.md
+  - Versions: versions.md
