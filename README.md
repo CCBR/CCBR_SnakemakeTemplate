@@ -39,3 +39,5 @@ gh repo create <reponame>
 
 git clone https://github.com/<your_github_handle>/<reponame>.git
 ```
+
+You can change `--public` to `--private` in the above `gh` command to make the newly create repository private.
