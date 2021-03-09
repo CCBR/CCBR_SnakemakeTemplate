@@ -16,7 +16,7 @@ You can use [gh cli](https://cli.github.com/) to
  * copy over the template code from CCBR_SnakemakePipelineCookiecutter
 with the following command
 ```
-gh repo create CCBR/<reponame> 
+gh repo create CCBR/<reponame> \
 --description "<repo description>" \
 --public \
 --template CCBR/CCBR_SnakemakePipelineCookiecutter \
@@ -31,7 +31,7 @@ git clone https://github.com/CCBR/<reponame>.git
 
 If you drop the `CCBR/` from the `gh` command above, then the new repo is created under your username. The commands would then look like this:
 ```
-gh repo create <reponame> 
+gh repo create <reponame> \
 --description "<repo description>" \
 --public \
 --template CCBR/CCBR_SnakemakePipelineCookiecutter \
