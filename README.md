@@ -26,7 +26,7 @@ On biowulf, you may have to specify the full path of the `gh` executable is loca
 
 Then you can clone a local copy of the new repository:
 ```
-git clone https://github.com/CCBR/<reponame>.git
+gh repo clone CCBR/<reponame>.git
 ```
 
 If you drop the `CCBR/` from the `gh` command above, then the new repo is created under your username. The commands would then look like this:
@@ -37,7 +37,7 @@ gh repo create <reponame> \
 --template CCBR/CCBR_SnakemakePipelineCookiecutter \
 --confirm
 
-git clone https://github.com/<your_github_handle>/<reponame>.git
+gh repo clone <your_github_handle>/<reponame>.git
 ```
 
 You can change `--public` to `--private` in the above `gh` command to make the newly created repository private.
