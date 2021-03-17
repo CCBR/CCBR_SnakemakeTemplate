@@ -7,7 +7,8 @@
 # a) on an interactive node (runlocal) OR
 # b) submit to the slurm load scheduler (run)
 #
-# 
+# DISCLAIMER: This wrapper only works on BIOWULF
+
 PYTHON_VERSION="python/3.7"
 SNAKEMAKE_VERSION="snakemake/5.24.1"
 
