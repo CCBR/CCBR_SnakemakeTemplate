@@ -2,19 +2,33 @@
 set -eo pipefail
 module purge
 
-# Author: Vishal Koparde, Ph.D.
+# Author: NameHere, PhD
 # CCBR, NCI
-# (c) 2021
+# (c) 2023
 #
 # wrapper script to run the snakemake pipeline
 # a) on an interactive node (runlocal) OR
 # b) submit to the slurm load scheduler (run)
 #
-# DISCLAIMER: This wrapper only works on BIOWULF
 
 # setting python and snakemake versions
-PYTHON_VERSION="python/3.7"
-SNAKEMAKE_VERSION="snakemake/5.24.1"
+PYTHON_VERSION="python/3.9"
+SNAKEMAKE_VERSION="snakemake/7.19.1"
+
+#define cluster, partitions dependent on host
+hostID=`echo $HOSTNAME`
+if [[ $hostID == "biowulf.nih.gov" ]]; then
+  BUYINPARTITIONS=$(bash <(curl -s https://raw.githubusercontent.com/CCBR/Tools/master/Biowulf/get_buyin_partition_list.bash 2>/dev/null))
+  PARTITIONS="norm,ccr"
+  cluster_specific_yaml="cluster_biowulf.yaml"
+  tools_specific_yaml="tools_biowulf.yaml"
+  #if [ $BUYINPARTITIONS ];then PARTITIONS="norm,$BUYINPARTITIONS";fi
+elif [[ $hostID == "biowulf8.nih.gov" ]]; then
+  PARTITIONS="rhel8"
+  cluster_specific_yaml="cluster_rhel8.yaml"
+  tools_specific_yaml="tools_rhel8.yaml"
+fi
+
 # set extra singularity bindings
 EXTRA_SINGULARITY_BINDS="/lscratch, /data/CCBR_Pipeliner/"
 SCRIPTNAME="$0"
@@ -22,73 +36,58 @@ SCRIPTDIRNAME=$(readlink -f $(dirname $0))
 SCRIPTBASENAME=$(readlink -f $(basename $0))
 
 
+# essential files
+# these are relative to the workflows' base folder
+# these are copied into the WORKDIR
+ESSENTIAL_FILES="config/config.yaml config/samples.tsv config/fqscreen_config.conf config/multiqc_config.yaml resources/cluster_* resources/tools_*"
+ESSENTIAL_FOLDERS="workflow/scripts"
+
+
 function get_git_commitid_tag() {
+  # This function gets the latest git commit id and tag
+  # @Input:
+  #   @param1: PIPELINE_HOME folder which is a initialized git repo folder path
+  # @Output:
+  #   @param1: tab-delimited commit id and tag
 
-# This function gets the latest git commit id and tag
-# @Input:
-#   @param1: PIPELINE_HOME folder which is a initialized git repo folder path
-# @Output:
-#   @param1: tab-delimited commit id and tag
-
-  cd $1
-  gid=$(git rev-parse HEAD)
-  tag=$(git describe --tags $gid 2>/dev/null)
-  echo -ne "$gid\t$tag"
-
+    cd $1
+    gid=$(git rev-parse HEAD)
+    tag=$(git describe --tags $gid 2>/dev/null)
+    echo -ne "$gid\t$tag"
 }
 
+## setting PIPELINE_HOME
 PIPELINE_HOME=$(readlink -f $(dirname "$0"))
 echo "Pipeline Dir: $PIPELINE_HOME"
+# set snakefile
 SNAKEFILE="${PIPELINE_HOME}/workflow/Snakefile"
 echo "Snakefile: $SNAKEFILE"
+# get github commit tag
 GIT_COMMIT_TAG=$(get_git_commitid_tag $PIPELINE_HOME)
 echo "Git Commit/Tag: $GIT_COMMIT_TAG"
 
-function usage_only() {
-
-# This script prints only the usage without any pre-amble
-
-cat << EOF
-#################################################################
-#################################################################
-USAGE:
-  bash ${SCRIPTNAME} -m/--runmode=<RUNMODE> -w/--workdir=<WORKDIR>
-Required Arguments:
-1.  RUNMODE: [Type: String] Valid options:
-    *) init : initialize workdir
-    *) run : run with slurm
-    *) reset : DELETE workdir dir and re-init it
-    *) dryrun : dry run snakemake to generate DAG
-    *) unlock : unlock workdir if locked by snakemake
-    *) runlocal : run without submitting to sbatch
-2.  WORKDIR: [Type: String]: Absolute or relative path to the 
-             output folder with write permissions.
-#################################################################
-#################################################################
-EOF
-
-}
-
 function usage() { 
-
 # This function prints generic usage of the wrapper script.
-# @Input: None
-# @Output: Usage information about the script
+  echo "${SCRIPTBASENAME}
+  --> run CARLISLE
+  Cut And Run anaLysIS pipeLinE
 
-cat << EOF
-#################################################################
-#################################################################
-Running ${SCRIPTBASENAME} ...
-<Your Pipeline Short Name>.
-echo "Git Commit/Tag: $GIT_COMMIT_TAG"
-EOF
-
-usage_only
-
+  USAGE:
+    bash ${SCRIPTNAME} -m/--runmode=<RUNMODE> -w/--workdir=<WORKDIR>
+  Required Arguments:
+  1.  RUNMODE: [Type: String] Valid options:
+      *) init : initialize workdir
+      *) run : run with slurm
+      *) reset : DELETE workdir dir and re-init it
+      *) dryrun : dry run snakemake to generate DAG
+      *) unlock : unlock workdir if locked by snakemake
+      *) runlocal : run without submitting to sbatch
+      *) testrun: run on cluster with included test dataset
+  2.  WORKDIR: [Type: String]: Absolute or relative path to the output folder with write permissions.
+  "
 }
 
 function err() { 
-
 # This is a generic error message function. It prints the message, then the 
 # usage and exits with non-zero exit code.
 # @Input:
@@ -104,68 +103,64 @@ cat <<< "
 " && usage_only && exit 1 1>&2; 
 }
 
-
-function _set_config() {
-
-sed -e "s/PIPELINE_HOME/${PIPELINE_HOME//\//\\/}/g" \
-    -e "s/WORKDIR/${WORKDIR//\//\\/}/g" \
-    ${PIPELINE_HOME}/config/config.yaml > $WORKDIR/config.yaml
-
-}
-
 function init() {
+  # This function initializes the workdir by:
+  # 1. creating the working dir
+  # 2. copying essential files like config.yaml and samples.tsv into the workdir
+  # 3. setting up logs and stats folders
 
-# This function initializes the workdir by:
-# 1. creating the working dir
-# 2. copying essential files like config.yaml and samples.tsv into the workdir
-# 3. setting up logs and stats folders
+    # create output folder
+    if [ -d $WORKDIR ];then err "Folder $WORKDIR already exists!"; fi
+    mkdir -p $WORKDIR
 
-# create output folder
-if [ -d $WORKDIR ];then err "Folder $WORKDIR already exists!"; fi
-mkdir -p $WORKDIR
+    # copy essential files
+    if [[ ! -d $WORKDIR/config ]]; then mkdir $WORKDIR/config; fi
+    for f in $ESSENTIAL_FILES; do
+      echo "Copying essential file: $f"
+      fbn=$(basename $f)
+      sed -e "s/PIPELINE_HOME/${PIPELINE_HOME//\//\\/}/g" -e "s/WORKDIR/${WORKDIR//\//\\/}/g" ${PIPELINE_HOME}/$f > $WORKDIR/config/$fbn
+    done
+    # rename config dependent on partition used
+    cp $WORKDIR/config/$cluster_specific_yaml $WORKDIR/config/cluster.yaml
+    cp $WORKDIR/config/$tools_specific_yaml $WORKDIR/config/tools.yaml
 
-# copy config and samples files
-_set_config
-cp ${PIPELINE_HOME}/config/samples.tsv $WORKDIR/
+    # copy essential folders
+    for f in $ESSENTIAL_FOLDERS;do
+      rsync -avz --no-perms --no-owner --no-group --progress $PIPELINE_HOME/$f $WORKDIR/
+    done
 
-#create log and stats folders
-if [ ! -d $WORKDIR/logs ]; then 
-  mkdir -p $WORKDIR/logs;echo "Logs Dir: $WORKDIR/logs"
-fi
-if [ ! -d $WORKDIR/stats ];then 
-  mkdir -p $WORKDIR/stats;echo "Stats Dir: $WORKDIR/stats"
-fi
+    #create log and stats folders
+    if [ ! -d $WORKDIR/logs ]; then mkdir -p $WORKDIR/logs;echo "Logs Dir: $WORKDIR/logs";fi
+    if [ ! -d $WORKDIR/stats ];then mkdir -p $WORKDIR/stats;echo "Stats Dir: $WORKDIR/stats";fi
 
-cat < EOF
-#################################################################
-#################################################################
-Done Initializing $WORKDIR. 
-You can now edit $WORKDIR/config.yaml and $WORKDIR/samples.tsv
-#################################################################
-#################################################################
-EOF
-
+    echo"#################################################################"
+    echo"#################################################################"
+    echo"Done Initializing $WORKDIR."
+    echo"You can now edit $WORKDIR/config.yaml and $WORKDIR/samples.tsv"
+    echo"#################################################################"
+    echo"#################################################################"
 }
 
 function check_essential_files() {
-
-# Checks if files essential to start running the pipeline exist in the workdir
-# By default config.yaml and samples.tsv are considered essential files.
+  # Checks if files essential to start running the pipeline exist in the workdir
+  # By default config.yaml and samples.tsv are considered essential files.
 
   if [ ! -d $WORKDIR ];then err "Folder $WORKDIR does not exist!"; fi
-  for f in config.yaml samples.tsv; do
-    if [ ! -f $WORKDIR/$f ]; then 
-      err "Error: '${f}' file not found in workdir ... initialize first!"
-    fi
+  for f in $ESSENTIAL_FILES; do
+    fbn=$(basename $f)
+    if [ ! -f $WORKDIR/config/$fbn ]; then err "Error: '${fbn}' file not found in $WORKDIR ... initialize first!";fi
   done
-
+  for f in $ESSENTIAL_FOLDERS;do
+    fbn=$(basename $f)
+    if [ ! -d $WORKDIR/$fbn ]; then err "Error: '${fbn}' folder not found in $WORKDIR ... initialize first!";fi
+  done
 }
 
 function reconfig(){
 
-# Rebuild config file and replace the config.yaml in the WORKDIR
-# this is only for dev purposes when new key-value pairs are being 
-# updated in the config file in PIPELINE_HOME
+  # Rebuild config file and replace the config.yaml in the WORKDIR
+  # this is only for dev purposes when new key-value pairs are being 
+  # updated in the config file in PIPELINE_HOME
 
   check_essential_files
   _set_config
@@ -174,28 +169,46 @@ function reconfig(){
 }
 
 function runcheck(){
-
-# Check "job-essential" files and load required modules
-
+  # Check "job-essential" files and load required modules
   check_essential_files
   module load $PYTHON_VERSION
   module load $SNAKEMAKE_VERSION
 
 }
 
+function controlcheck(){
+  # check controls are not listed in comparisons
+  control_list=`awk '$3 ~ /Y/' ${WORKDIR}/config/samples.tsv | awk '{print $1}'`
+  check1=`awk '{print $1}' ${WORKDIR}/config/contrasts.tsv`
+  check2=`awk '{print $2}' ${WORKDIR}/config/contrasts.tsv`
+  
+  for sample_id in ${control_list[@]}; do
+    if [[ $check1 =~ $sample_id || $check2 =~ $sample_id ]]; then 
+      echo "Controls ($sample_id) cannot be listed in contrast.csv - update and re-run"
+      exit 0
+    fi
+  done
+}
+
 function dryrun() {
-
-# check essential files, load modules and do Dry-run
-
+  # check essential files, load modules and do Dry-run
   runcheck
+  # can add controlcheck if needed
+
+  if [ ! -d ${WORKDIR}/logs/dryrun/ ]; then mkdir ${WORKDIR}/logs/dryrun/; fi
+
+  if [ -f ${WORKDIR}/dryrun.log ]; then
+    modtime=$(stat ${WORKDIR}/dryrun.log |grep Modify|awk '{print $2,$3}'|awk -F"." '{print $1}'|sed "s/ //g"|sed "s/-//g"|sed "s/://g")
+    mv ${WORKDIR}/dryrun.log ${WORKDIR}/logs/dryrun/dryrun.${modtime}.log
+  fi
+
   run "--dry-run"
 
 }
 
 function unlock() {
-
-# check essential files, load modules and 
-# unlock the workdir if previous snakemake run ended abruptly
+  # check essential files, load modules and 
+  # unlock the workdir if previous snakemake run ended abruptly
 
   runcheck
   run "--unlock"
@@ -212,14 +225,13 @@ function _exe_in_path() {
 
 }
 
-
 function set_singularity_binds(){
 
-# this functions tries find what folders to bind
-# "Biowulf specific"
-# assumes that config.yaml and samples.tsv in the WORKDIR are essential
-# files with the most uptodate information
-# required dos2unix in path
+  # this functions tries find what folders to bind
+  # "Biowulf specific"
+  # assumes that config.yaml and samples.tsv in the WORKDIR are essential
+  # files with the most uptodate information
+  # required dos2unix in path
   _exe_in_path dos2unix
   echo "$PIPELINE_HOME" > ${WORKDIR}/tmp1
   echo "$WORKDIR" >> ${WORKDIR}/tmp1
@@ -245,12 +257,26 @@ function set_singularity_binds(){
 
 }
 
-function printbinds(){
+function dag() {
+  runcheck
+  module load graphviz
+  snakemake -s $SNAKEFILE --configfile ${WORKDIR}/config/config.yaml --forceall --dag |dot -Teps > ${WORKDIR}/dag.eps
+}
 
-# set the singularity binds and print them
-# singularity binds are /lscratch,/data/CCBR_Pipeliner,
-# plus paths deduced from config.yaml and samples.tsv using 
-# set_singularity binds function
+function testrun() {
+  # Run for a test run - this is an example and should be edited, as needed
+  check_essential_files
+  sed -e "s/PIPELINE_HOME/${PIPELINE_HOME//\//\\/}/g" ${PIPELINE_HOME}/.test/samples.test.tsv > $WORKDIR/config/samples.tsv
+  cp ${PIPELINE_HOME}/.test/contrasts.test.tsv $WORKDIR/config/contrasts.tsv
+  check_essential_files
+  dryrun
+}
+
+function printbinds(){
+  # set the singularity binds and print them
+  # singularity binds are /lscratch,/data/CCBR_Pipeliner,
+  # plus paths deduced from config.yaml and samples.tsv using 
+  # set_singularity binds function
 
   set_singularity_binds
   echo $SINGULARITY_BINDS
@@ -258,9 +284,8 @@ function printbinds(){
 }
 
 function runlocal() {
-
-# If the pipeline is fired up on an interactive node (with sinteractive), 
-# this function runs the pipeline
+  # If the pipeline is fired up on an interactive node (with sinteractive), 
+  # this function runs the pipeline
 
   runcheck
   set_singularity_binds
@@ -272,7 +297,7 @@ function runlocal() {
 
 function runslurm() {
 
-# Submit the execution of the pipeline to the biowulf job scheduler (slurm)
+  # Submit the execution of the pipeline to the biowulf job scheduler (slurm)
 
   runcheck
   set_singularity_binds
@@ -314,8 +339,7 @@ function create_runinfo() {
 
 function preruncleanup() {
 
-# Cleanup function to rename/move files related to older runs to prevent overwriting them.
-
+  # Cleanup function to rename/move files related to older runs to prevent overwriting them.
   echo "Running..."
 
   # check initialization
@@ -342,14 +366,13 @@ function preruncleanup() {
 
 }
 
-
 function run() {
-# RUN function
-# argument1 can be:
-# 1. local or
-# 2. dryrun or
-# 3. unlock or
-# 4. slurm
+  # RUN function
+  # argument1 can be:
+  # 1. local or
+  # 2. dryrun or
+  # 3. unlock or
+  # 4. slurm
 
   if [ "$1" == "local" ];then
 
@@ -376,9 +399,9 @@ function run() {
 
   elif [ "$1" == "slurm" ];then
   
-  preruncleanup
-# if QOS is other than "global" and is supplied in the cluster.json file then add " --qos={cluster.qos}" to the 
-# snakemake command below
+    preruncleanup
+    # if QOS is other than "global" and is supplied in the cluster.json file then add " --qos={cluster.qos}" to the 
+    # snakemake command below
   cat > ${WORKDIR}/submit_script.sbatch << EOF
 #!/bin/bash
 #SBATCH --job-name="CCBRPipeline"
@@ -401,7 +424,7 @@ snakemake -s $SNAKEFILE \
 --printshellcmds \
 --latency-wait 120 \
 --configfile ${WORKDIR}/config.yaml \
---cluster-config ${PIPELINE_HOME}/resources/cluster.json \
+--cluster-config ${PIPELINE_HOME}/resources/cluster.yaml \
 --cluster "sbatch --gres {cluster.gres} --cpus-per-task {cluster.threads} -p {cluster.partition} -t {cluster.time} --mem {cluster.mem} --job-name {cluster.name} --output {cluster.output} --error {cluster.error}" \
 -j 500 \
 --rerun-incomplete \
@@ -423,27 +446,25 @@ EOF
   sbatch ${WORKDIR}/submit_script.sbatch
 
   else # for unlock and dryrun 
-
-snakemake $1 -s $SNAKEFILE \
---directory $WORKDIR \
---use-envmodules \
---printshellcmds \
---latency-wait 120 \
---configfile ${WORKDIR}/config.yaml \
---cluster-config ${PIPELINE_HOME}/config/cluster.json \
---cluster "sbatch --gres {cluster.gres} --cpus-per-task {cluster.threads} -p {cluster.partition} -t {cluster.time} --mem {cluster.mem} --job-name {cluster.name} --output {cluster.output} --error {cluster.error}" \
--j 500 \
---rerun-incomplete \
---keep-going \
---stats ${WORKDIR}/snakemake.stats
+    snakemake $1 -s $SNAKEFILE \
+    --directory $WORKDIR \
+    --use-envmodules \
+    --printshellcmds \
+    --latency-wait 120 \
+    --configfile ${WORKDIR}/config.yaml \
+    --cluster-config ${PIPELINE_HOME}/config/cluster.yaml \
+    --cluster "sbatch --gres {cluster.gres} --cpus-per-task {cluster.threads} -p {cluster.partition} -t {cluster.time} --mem {cluster.mem} --job-name {cluster.name} --output {cluster.output} --error {cluster.error}" \
+    -j 500 \
+    --rerun-incomplete \
+    --keep-going \
+    --stats ${WORKDIR}/snakemake.stats
 
   fi
 
 }
 
 function reset() {
-
-# Delete the workdir and re-initialize it
+  # Delete the workdir and re-initialize it
 
   echo "Working Dir: $WORKDIR"
   if [ ! -d $WORKDIR ];then err "Folder $WORKDIR does not exist!";fi
@@ -454,10 +475,8 @@ function reset() {
 
 }
 
-
 function main(){
-
-# Main function which parses all arguments
+  # Main function which parses all arguments
 
   if [ $# -eq 0 ]; then usage && exit 1; fi
 
