@@ -12,8 +12,10 @@ B. Initialize Pipeline
 ```
 bash ./path/to/dir/carlisle --runmode=init --workdir=/path/to/output/dir
 ```
+## 5.2 About the test data
+This test data consists of sub-sampled inputs, consisting of two pairs of two replicate samples and one control. The reference to be used is hg38.
 
-## 5.2 Submit the test data
+## 5.3 Submit the test data
 Test data is included in the .test directory as well as the config directory.
 
 A Run the test command to prepare the data, perform a dry-run and submit to the cluster
@@ -56,5 +58,5 @@ trim                                    9             56             56
 total                                 478              1             56
 ```
 
-## 5.3 Review outputs
+## 5.4 Review outputs
 Review the expected outputs on the [Output](https://ccbr.github.io/CARLISLE/user-guide/output/) page. If there are errors, review and performing stesp described on the [Troubleshooting](https://ccbr.github.io/CARLISLE/user-guide/troubleshooting/) page as needed.
