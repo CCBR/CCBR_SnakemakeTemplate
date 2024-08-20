@@ -4,6 +4,9 @@ CCBR template for creating Snakemake pipelines <!-- TODO: replace this line with
 
 [![build](https://github.com/CCBR/CCBR_SnakemakeTemplate/actions/workflows/build.yml/badge.svg)](https://github.com/CCBR/CCBR_SnakemakeTemplate/actions/workflows/build.yml) <!-- TODO: replace CCBR/CCBR_SnakemakeTemplate with your OWNER/TOOL_NAME -->
 
+See the website for detailed information, documentation, and examples:
+<https://ccbr.github.io/TOOL_NAME/>
+
 ## Using this template
 
 1. Create a new repository from this template using either of these options:
