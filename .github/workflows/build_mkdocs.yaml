@@ -3,7 +3,12 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - 'docs/**'
+      - "docs/**"
+
+permissions:
+  contents: write
+  pages: write
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
