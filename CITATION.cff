@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: Please cite LIBERTY as below.
+authors:
+- family-names: Mathur
+  given-names: Samarth
+  orcid: https://orcid.org/0000-0002-6446-5718
+  affiliation: Advanced Biomedical Computational Science, Frederick National Laboratory
+    for Cancer Research, Frederick, MD 21702, USA
+title: 'LIBERTY: Extracellular veSiCles rnAseq PipelinE'
+url: https://github.com/CCBR/LIBERTY
+repository-code: https://github.com/CCBR/LIBERTY
+license: MIT
+type: software
+identifiers:
+- description: Archived snapshots of all versions
+  type: doi
+  value: NA
+version: v0.0.1
+date-released: '2025-10-31'
