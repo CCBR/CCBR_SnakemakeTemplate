@@ -1,0 +1,8 @@
+from os.path import join
+include: join("rules","init.smk")
+
+localrules: all
+rule all:
+    input:
+
+include: join("rules","dummy.smk")

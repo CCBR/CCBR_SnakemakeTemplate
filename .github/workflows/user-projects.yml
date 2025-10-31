@@ -1,0 +1,18 @@
+name: Add issues/PRs to user projects
+
+on:
+  issues:
+    types:
+      - assigned
+  pull_request:
+    types:
+      - assigned
+
+permissions:
+  issues: read
+  pull-requests: read
+
+jobs:
+  add-to-project:
+    uses: CCBR/.github/.github/workflows/auto-add-user-project.yml@v0.1.0
+    secrets: inherit
