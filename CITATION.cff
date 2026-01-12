@@ -1,14 +1,14 @@
 cff-version: 1.2.0
-message: Please cite LIBERTY as below.
+message: Please cite CCBR_SnakeMake_Pipeline as below.
 authors:
-- family-names: Mathur
-  given-names: Samarth
-  orcid: https://orcid.org/0000-0002-6446-5718
+- family-names: Doe
+  given-names: John
+  orcid: https://orcid.org/xxxxxxx
   affiliation: Advanced Biomedical Computational Science, Frederick National Laboratory
     for Cancer Research, Frederick, MD 21702, USA
-title: 'LIBERTY: Extracellular veSiCles rnAseq PipelinE'
-url: https://github.com/CCBR/LIBERTY
-repository-code: https://github.com/CCBR/LIBERTY
+title: 'CCBR_SnakeMake_Pipeline'
+url: https://github.com/CCBR/<<your_pipeline_name>>
+repository-code: https://github.com/CCBR/<<your_pipeline_name>>
 license: MIT
 type: software
 identifiers:

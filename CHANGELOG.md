@@ -1,4 +1,4 @@
-## LIBERTY development version
+## CCBR_Snakemake_pipeline development version
 
-## LIBERTY 0.0.1
+## CCBR_Snakemake_pipeline 0.0.1
 
