@@ -3,8 +3,3 @@
 !.gitignore
 !.gitattributes
 site/
-<<<<<<< HEAD
-__pycache__/
-*.egg-info/
-=======
->>>>>>> main
