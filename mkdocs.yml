@@ -1,28 +1,48 @@
 # Project Information
-site_name: tool_name
-site_author: Samarth Mathur, Ph.D.
+site_name: TOOL_NAME # TODO: replace with the final tool name used in docs and packaging metadata
+site_author: CCR Collaborative Bioinformatics Resource
 site_description: >-
-  tool_name - LIquid Biopsy immunogEnetic vaRianT analYsis.
+  insert a one-line description of TOOL_NAME here # TODO: replace with the final tool summary
 # Repository
-repo_name: CCBR/tool_name
-repo_url: https://github.com/CCBR/tool_name
-edit_uri: https://github.com/CCBR/tool_name/edit/main/docs/
+repo_name: CCBR/TOOL_NAME # TODO: update to the final GitHub org/repo
+repo_url: https://github.com/CCBR/TOOL_NAME # TODO: update to the final repository URL
+edit_uri: https://github.com/CCBR/TOOL_NAME/edit/main/docs/ # TODO: update if the default branch or repo path differs
 
 # Copyright
-copyright: Copyright &copy; 2024-{{ now().year }} CCBR
+copyright: Copyright &copy; 2026 CCR Collaborative Bioinformatics Resource
 
 # Configuration
 theme:
-  name: readthedocs
-  locale: en
-  custom_dir: docs/overrides
-  #
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.top
+    - navigation.indexes
+    - toc.integrate
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+    - scheme: slate
+      primary: red
+      accent: red
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
+
 # Plugins
 plugins:
   - search
   - git-revision-date
   - minify:
       minify_html: true
+  - mike:
+      alias_type: symlink
+      canonical_version: latest
+      version_selector: true
 
 # Customization
 extra:
@@ -33,18 +53,14 @@ extra:
       link: https://github.com/CCBR
     - icon: fontawesome/brands/docker
       link: https://hub.docker.com/orgs/nciccbr/repositories
-  # version:
-  #   provider: mike
-
-extra_css:
-  - css/custom.css
-extra_javascript:
-  - js/custom.js
+  version:
+    provider: mike
 
 # Extensions
 markdown_extensions:
   - markdown.extensions.admonition
   - markdown.extensions.attr_list
+  - markdown.extensions.md_in_html
   - markdown.extensions.def_list
   - markdown.extensions.footnotes
   - markdown.extensions.meta
@@ -55,9 +71,16 @@ markdown_extensions:
   - pymdownx.caret
   - pymdownx.critic
   - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
   - pymdownx.highlight
   - pymdownx.inlinehilite
   - pymdownx.keys
+  - pymdownx.magiclink:
+      repo_url_shorthand: true
+      user: squidfunk
+      repo: mkdocs-material
   - pymdownx.mark
   - pymdownx.smartsymbols
   - pymdownx.snippets:
@@ -70,13 +93,15 @@ markdown_extensions:
 
 # Page Tree
 nav:
-  - About : index.md
-  - Getting started: user-guide/getting-started.md
-  - Usage: 
-    - 1. Running the Pipeline: user-guide/run.md
-    - 2. Expected Output: user-guide/output.md
-    - 3. Preparing Files: user-guide/preparing-files.md
-    - 4. Test Run: user-guide/test-info.md
-  - FAQs: user-guide/troubleshooting.md
-  - Contributions: user-guide/contributions.md
-  - License: license.md
+  - Background: index.md
+  - Usage:
+      - 1. Getting Started: user-guide/getting-started.md
+      - 2. Preparing Files: user-guide/preparing-files.md
+      - 3. Running the Pipeline: user-guide/run.md
+      - 4. Expected Output: user-guide/output.md
+      - 5. Running Test Data: user-guide/test-info.md
+      - Troubleshooting: user-guide/troubleshooting.md
+  - FAQ:
+      - How to contribute: contributing.md
+      - Contributors: contributors.md
+  - Changelog: changelog.md

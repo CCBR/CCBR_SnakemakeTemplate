@@ -8,8 +8,9 @@ build-backend = 'setuptools.build_meta'
 [project]
 name = 'tool_name'
 dynamic = ['version','readme']
-description = "LIquid Biopsy immunogEnetic vaRianT analYsis"
+description = "TODO: replace with a one-line tool description"
 authors = [
+    # TODO: replace with the tool authors and keep in sync with CITATION.cff
     {name = "Samarth Mathur", email = "samarth.mathur@nih.gov"}
 ]
 maintainers = [
@@ -52,7 +53,7 @@ test = [
 tool_name = "tool_name.src.tool_name.__main__:main"
 
 [project.urls]
-Repository = "https://github.com/CCBR/tool_name"
+Repository = "https://github.com/CCBR/tool_name" # TODO: update to the final repository URL
 
 [tool.setuptools.package-dir]
 tool_name = "."

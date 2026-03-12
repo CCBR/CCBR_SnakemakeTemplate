@@ -1,3 +1,6 @@
+# TODO: Replace this README with tool-specific documentation before the first release.
+# TODO: Keep the README title, one-line summary, installation, and usage examples aligned with pyproject.toml, mkdocs.yml, and CITATION.cff.
+
 # CCBR Snakemake Pipeline Cookiecutter
 This is a dummy folder framework for CCBR snakemake workflows.
 New workflows can be started using this repository as a template.
