@@ -23,13 +23,13 @@ import argparse
 
 
 # Pipeline Metadata and globals
-LIBERTY_PATH = os.path.dirname(
+tool_name_path = os.path.dirname(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 )
 __version__ = get_version()
 __home__ = os.path.dirname(os.path.abspath(__file__))
 _name = os.path.basename(sys.argv[0])
-_description = "liberty pipeline"
+_description = "tool_name pipeline"
 
 # check python version ... should be 3.7 or newer
 MIN_PYTHON = (3, 7)
@@ -283,7 +283,7 @@ def initialize(sub_args, repo_path, output_path):
     @param sub_args <parser.parse_args() object>:
         Parsed arguments for run sub-command
     @param repo_path <str>:
-        Path to LIBERTY source code and its templates
+        Path to tool_name source code and its templates
     @param output_path <str>:
         Pipeline output path, created if it does not exist
     @return inputs list[<str>]:
@@ -322,7 +322,7 @@ def join_jsons(templates):
     @return aggregated <dict>:
         Dictionary containing the contents of all the input JSON files
     """
-    # Get absolute PATH to templates in ESCAPE git repo
+    # Get absolute PATH to templates in the tool_name git repo
     repo_path = os.path.dirname(os.path.abspath(__file__))
     aggregated = {}
 
@@ -340,7 +340,7 @@ def join_yamls(templates):
     @return aggregated <dict>:
         Dictionary containing the contents of all the input YAML files
     """
-    # Get absolute PATH to templates in ESCAPE git repo
+    # Get absolute PATH to templates in the tool_name git repo
     repo_path = os.path.dirname(os.path.abspath(__file__))
     aggregated = {}
 
@@ -422,7 +422,7 @@ def setup(sub_args, ifiles, output_path):
     @param sub_args <parser.parse_args() object>:
         Parsed arguments for run sub-command
     @param repo_path <str>:
-        Path to LIBERTY source code and its templates
+        Path to tool_name source code and its templates
     @param output_path <str>:
         Pipeline output path, created if it does not exist
     @return config <dict>:
@@ -430,15 +430,15 @@ def setup(sub_args, ifiles, output_path):
     @return hpcname <str>:
     """
     # Resolves PATH to template for genomic reference files to select from a
-    # bundled reference genome via LIBERTY build subcommand
+    # bundled reference genome via the tool_name build subcommand
     hpcname ="biowulf"
     version = __version__
-    print("Thank you for running LIBERTY",version,"pipeline on BIOWULF!")
+    print("Thank you for running tool_name",version,"pipeline on BIOWULF!")
 
     if str(sub_args.viral).lower() == 'true':
         genome_config = os.path.join(
             output_path, "config", "genomes", sub_args.genome + "+viral" +".yaml")
-        #print("--viral flag added. Will use custom host+viral reference genomes for LIBERTY pipeline")
+        #print("--viral flag added. Will use custom host+viral reference genomes for tool_name pipeline")
     else:
         genome_config = os.path.join(
             output_path, "config", "genomes", sub_args.genome + ".yaml")
@@ -454,7 +454,7 @@ def setup(sub_args, ifiles, output_path):
     copyfile(cluster_config,cluster_output)
 
     # Global config file for pipeline, config.json
-    config = join_yamls(required.values())  # uses templates in the LIBERTY repo
+    config = join_yamls(required.values())  # uses templates in the tool_name repo
     config = add_user_information(config)
     config = add_rawdata_information(sub_args, config, ifiles)
 
@@ -597,11 +597,11 @@ def orchestrate(
     outdir,
     threads=2,
     submission_script="runner",
-    masterjob="pl:liberty",
+    masterjob="pl:tool_name",
     tmp_dir="/lscratch/$SLURM_JOBID/",
     hpcname="",
 ):
-    """Runs LIBERTY pipeline via selected executor: local or slurm.
+    """Runs the tool_name pipeline via selected executor: local or slurm.
     If 'local' is selected, the pipeline is executed locally on a compute node/instance.
     If 'slurm' is selected, jobs will be submitted to the cluster using SLURM job scheduler.
     @param outdir <str>:
@@ -614,7 +614,7 @@ def orchestrate(
         Number of threads to use for local execution method
     @param submission_script <str>:
         Path to master jobs submission script:
-            escape run =   /path/to/output/resources/runner
+            tool_name run =   /path/to/output/resources/runner
     @param masterjob <str>:
         Name of the master job
     @param tmp_dir <str>:
@@ -637,7 +637,7 @@ def orchestrate(
 
     # Run on compute node or instance without submitting jobs to a scheduler
     if mode == "local":
-        # Run LIBERTY: instantiate main/master process
+        # Run tool_name: instantiate main/master process
         # Look into later: it maybe worth replacing Popen subprocess with a direct
         # snakemake API call: https://snakemake.readthedocs.io/en/stable/api_reference/snakemake.html
         # Create log file for pipeline
@@ -655,7 +655,7 @@ def orchestrate(
 
     # Submitting jobs to cluster via SLURM's job scheduler
     elif mode == "slurm":
-        # Run LIBERTY: instantiate main/master process
+        # Run tool_name: instantiate main/master process
         # Look into later: it maybe worth replacing Popen subprocess with a direct
         # snakemake API call: https://snakemake.readthedocs.io/en/stable/api_reference/snakemake.html
         # snakemake --latency-wait 120  -s $R/Snakefile -d $R --printshellcmds
@@ -666,8 +666,8 @@ def orchestrate(
 
         # Create log file for master job information
         logfh = open(os.path.join(outdir, "logfiles", "master.log"), "w")
-        # submission_script for liberty run is /path/to/output/resources/runner
-        # submission_script for liberty build is /path/to/output/resources/builder
+        # submission_script for tool_name run is /path/to/output/resources/runner
+        # submission_script for tool_name build is /path/to/output/resources/builder
         cmdlist = [
             str(os.path.join(outdir, "resources", str(submission_script))),
             mode,
@@ -694,7 +694,7 @@ def orchestrate(
 
 
 def run(sub_args):
-    """Initialize, setup, and run the LIBERTY pipeline.
+    """Initialize, setup, and run the tool_name pipeline.
     Calls initialize() to create output directory and copy over pipeline resources,
     setup() to create the pipeline config file, dryrun() to ensure their are no issues
     before running the pipeline, and finally run() to execute the Snakemake workflow.
@@ -703,10 +703,10 @@ def run(sub_args):
     """
     require(["snakemake", "ccbrpipeliner"], ["snakemake", "ccbrpipeliner"])
 
-    # Get PATH to LIBERTY git repository for copying over pipeline resources
+    # Get PATH to the tool_name git repository for copying over pipeline resources
     
     # Initialize working directory, copy over required pipeline resources
-    input_files = initialize(sub_args, repo_path=LIBERTY_PATH, output_path=sub_args.output)
+    input_files = initialize(sub_args, repo_path=tool_name_path, output_path=sub_args.output)
 
 
     # Step pipeline for execution, create config.json config file from templates
@@ -719,7 +719,7 @@ def run(sub_args):
         dryrun_output = dryrun(
             outdir=sub_args.output
         )  # python3 returns byte-string representation
-        print("\nDry-running LIBERTY pipeline:\n{}".format(dryrun_output.decode("utf-8")))
+        print("\nDry-running tool_name pipeline:\n{}".format(dryrun_output.decode("utf-8")))
         sys.exit(0) 
 
     # Run pipeline
@@ -763,21 +763,21 @@ def run(sub_args):
 def genome_options(parser, user_option, prebuilt):
     """Dynamically checks if --genome option is a valid choice. Compares against a
     list of prebuilt or bundled genome reference genomes and accepts a custom reference
-    genome that was built using the 'escape build' command. The ability to also
-    accept a custom reference YAML file allows for chaining of the escape build and run
+    genome that was built using the 'tool_name build' command. The ability to also
+    accept a custom reference YAML file allows for chaining of the tool_name build and run
     commands in succession.
     @param parser <argparse.ArgumentParser object>:
         Parser object from which an exception is raised not user_option is not valid
     @param user_option <str>:
-        Provided value to the escape run, --genome argument
+        Provided value to the tool_name run, --genome argument
     @param prebuilt list[<str>]:
         List of prebuilt reference genomes
     return user_option <str>:
-        Provided value to the escape run, --genome argument
+        Provided value to the tool_name run, --genome argument
         If value is not valid or custom reference genome JSON file not readable,
         an exception is raised.
     """
-    # Checks for custom built genomes using escape build
+    # Checks for custom built genomes using tool_name build
     if user_option.endswith(".yaml"):
         # Check file is readable or accessible
         permissions(parser, user_option, os.R_OK)
@@ -806,7 +806,7 @@ ascii_banner = f"""
 [/cyan]
 [magenta] [bold] Version:  {__version__} [/bold] [/magenta] 
 """
-styled_name = "[bold]LIBERTY: LIquid Biopsy immunogEnetic vaRianT analYsis[/bold]"
+styled_name = "[bold]tool_name: LIquid Biopsy immunogEnetic vaRianT analYsis[/bold]"
 
 def parsed_arguments(name, description):
     """Parses user-provided command-line arguments. Requires argparse and textwrap
@@ -848,7 +848,7 @@ def parsed_arguments(name, description):
     # description below should be updated (i.e. update usage and add new option)
     required_run_options = textwrap.dedent(
         """
-        {1}{0} {3}run{4}: {1} Runs the LIBERTY pipeline.{4}
+        {1}{0} {3}run{4}: {1} Runs the tool_name pipeline.{4}
 
         {1}{2}Synopsis:{4}
           $ {0} run [--help] \\
@@ -936,7 +936,7 @@ def parsed_arguments(name, description):
 
             #### Step1: Dry-run the pipeline
 
-            ./liberty run \\
+            ./tool_name run \\
             --dry-run \\
             --input $INDIR/*R?*.fastq.gz  \\
             --genome hg38 \\ # available genomes = mm10, hg38
@@ -948,7 +948,7 @@ def parsed_arguments(name, description):
 
             #### Step2: Submit the pipeline
 
-            ./liberty run \\
+            ./tool_name run \\
             --input $INDIR/*R?*.fastq.gz  \\
             --genome hg38 \\ 
             --mode slurm \\
@@ -964,7 +964,7 @@ def parsed_arguments(name, description):
     # Suppressing help message of required args to overcome no sub-parser named groups
     subparser_run = subparsers.add_parser(
         "run",
-        help="Run the LIBERTY pipeline.",
+        help="Run the tool_name pipeline.",
         usage=argparse.SUPPRESS,
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=required_run_options,
@@ -1066,7 +1066,7 @@ def parsed_arguments(name, description):
     # description below should be updated (i.e. update usage and add new option)
     required_plot_options = textwrap.dedent(
         """
-        {1}{0} {3}plot{4}: {1} Renders the ESCAPE pipeline summary report.{4}
+        {1}{0} {3}plot{4}: {1} Renders the tool_name pipeline summary report.{4}
 
         {1}{2}Synopsis:{4}
           $ {0} plot [--help] \\
@@ -1080,8 +1080,8 @@ def parsed_arguments(name, description):
                                 Example: --sampleFile /data/$USER/sampleFile.txt
         
           --results 
-                                Path to the folder containing results from the ESCAPE analysis.
-                                Example: --results /data/$USER/escape_output/
+                                Path to the folder containing results from the tool_name analysis.
+                                Example: --results /data/$USER/tool_name_output/
         """.format(
             name, c.bold, c.url, c.italic, c.end)
     )
@@ -1090,11 +1090,11 @@ def parsed_arguments(name, description):
     plot_epilog = textwrap.dedent(
         """\
         Example:
-          # Renders the LIBERTY pipeline summary report
+          # Renders the tool_name pipeline summary report
           
-          liberty plot   \\
+          tool_name plot   \\
             --sampleFile /data/$USER/sampleFile.txt \\
-            --results /data/$USER/escape_output 
+            --results /data/$USER/tool_name_output 
 
         version:
           {}
@@ -1106,7 +1106,7 @@ def parsed_arguments(name, description):
     # Suppressing help message of required args to overcome no sub-parser named groups
     subparser_plot = subparsers.add_parser(
         "plot",
-        help="Renders the ESCAPE pipeline summary report.",
+        help="Renders the tool_name pipeline summary report.",
         usage=argparse.SUPPRESS,
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=required_plot_options,
@@ -1125,7 +1125,7 @@ def parsed_arguments(name, description):
         help=argparse.SUPPRESS,
     )
 
-    # Results Directory (combinedTables from the ESCAPE analysis)
+    # Results Directory (combinedTables from the tool_name analysis)
     subparser_plot.add_argument(
         "--results",
         type=lambda option: os.path.abspath(os.path.expanduser(option)),
@@ -1152,7 +1152,7 @@ def main():
     args = parsed_arguments(name=_name, description=_description)
 
     # Display version information
-    print("escape ({})".format(__version__))
+    print("tool_name ({})".format(__version__))
 
     # Mediator method to call sub-command's set handler function
     args.func(args)

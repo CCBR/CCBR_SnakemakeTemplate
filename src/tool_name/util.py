@@ -1,6 +1,6 @@
 import pathlib
 
-def escape_base(*paths, debug=False):
+def tool_name_base(*paths, debug=False):
     """Get the absolute path to a file in the repository
     @return abs_path <str>
     """
@@ -11,10 +11,10 @@ def escape_base(*paths, debug=False):
     return str(basedir.joinpath(*paths))
 
 def get_version(debug=False):
-    """Get the current ESCAPE version
+    """Get the current tool_name version
     @return version <str>
     """
-    version_file = escape_base("VERSION")
+    version_file = tool_name_base("VERSION")
     if debug:
         print("VERSION FILE:", version_file)
     with open(version_file, "r") as vfile:
