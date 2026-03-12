@@ -1,12 +1,12 @@
 # Project Information
-site_name: LIBERTY
+site_name: tool_name
 site_author: Samarth Mathur, Ph.D.
 site_description: >-
-  LIBERTY - LIquid Biopsy immunogEnetic vaRianT analYsis.
+  tool_name - LIquid Biopsy immunogEnetic vaRianT analYsis.
 # Repository
-repo_name: CCBR/LIBERTY
-repo_url: https://github.com/CCBR/LIBERTY
-edit_uri: https://github.com/CCBR/LIBERTY/edit/main/docs/
+repo_name: CCBR/tool_name
+repo_url: https://github.com/CCBR/tool_name
+edit_uri: https://github.com/CCBR/tool_name/edit/main/docs/
 
 # Copyright
 copyright: Copyright &copy; 2024-{{ now().year }} CCBR

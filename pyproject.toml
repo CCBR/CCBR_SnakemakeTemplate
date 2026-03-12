@@ -6,7 +6,7 @@ requires = [
 build-backend = 'setuptools.build_meta'
 
 [project]
-name = 'LIBERTY'
+name = 'tool_name'
 dynamic = ['version','readme']
 description = "LIquid Biopsy immunogEnetic vaRianT analYsis"
 authors = [
@@ -49,13 +49,13 @@ test = [
 ]
 
 [project.scripts]
-liberty = "liberty.src.liberty.__main__:main"
+tool_name = "tool_name.src.tool_name.__main__:main"
 
 [project.urls]
-Repository = "https://github.com/CCBR/LIBERTY"
+Repository = "https://github.com/CCBR/tool_name"
 
 [tool.setuptools.package-dir]
-liberty = "."
+tool_name = "."
 
 [tool.setuptools.package-data]
 "*" = ["CITATION.cff", "LICENSE", "VERSION", "resources/**", "bin/**", "config/**", "workflow/**", ".tests/**"]
