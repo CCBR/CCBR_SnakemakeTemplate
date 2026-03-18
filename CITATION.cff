@@ -3,6 +3,12 @@ message: "Please cite TOOL_NAME as below."
 authors: # TODO: author names should match those in pyproject.toml
 - family-names: LASTNAME1 # TODO: add your name, orcid, and affiliation
   given-names: FIRSTNAME1
+- family-names: Mathur
+  given-names: Samarth
+  orcid: https://orcid.org/0000-0002-6446-5718
+  affiliation:
+    Advanced Biomedical Computational Science, Frederick National Laboratory
+    for Cancer Research, Frederick, MD 21702, USA
 - family-names: Sovacool
   given-names: Kelly
   orcid: https://orcid.org/0000-0003-3283-829X
