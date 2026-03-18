@@ -806,7 +806,7 @@ ascii_banner = f"""
 [/cyan]
 [magenta] [bold] Version:  {__version__} [/bold] [/magenta] 
 """
-styled_name = "[bold]tool_name: LIquid Biopsy immunogEnetic vaRianT analYsis[/bold]"
+styled_name = "[bold]tool_name: TODO oneline description of TOOL_NAME[/bold]"
 
 def parsed_arguments(name, description):
     """Parses user-provided command-line arguments. Requires argparse and textwrap
