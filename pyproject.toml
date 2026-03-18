@@ -11,7 +11,9 @@ dynamic = ['version','readme']
 description = "TODO: replace with a one-line tool description"
 authors = [
     # TODO: replace with the tool authors and keep in sync with CITATION.cff
-    {name = "Samarth Mathur", email = "samarth.mathur@nih.gov"}
+    {name = "Samarth Mathur", email = "samarth.mathur@nih.gov"},
+    {name = "Kelly Sovacool", email = "kelly.sovacool@nih.gov"},
+    {name = "Vishal Koparde", email = "vishal.koparde@nih.gov"}
 ]
 maintainers = [
     {name = "CCR Collaborative Bioinformatics Resource", email = "ccbr@mail.nih.gov"},
