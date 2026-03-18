@@ -74,11 +74,24 @@ See the website for detailed information, documentation, and examples:
 
 ## Usage
 
-Install the tool in edit mode:
+<!-- TODO uncomment this section once your tool is added to the ccbrpipeliner module
+TOOL_NAME is installed on the [Biowulf HPC](#biowulf).
+For installation in other execution environments,
+refer to the [docs](https://ccbr.github.io/TOOL_NAME/).
+
+### Biowulf
+
+TOOL_NAME is available on [Biowulf](https://hpc.nih.gov/) in the `ccbrpipeliner` module.
+You'll first need to start an interactive session, then load the module:
 
 ```sh
-pip3 install -e .
+# start an interactive node
+sinteractive --mem=2g --cpus-per-task=2 --gres=lscratch:200
+
+# load the ccbrpipeliner module
+module load ccbrpipeliner
 ```
+-->
 
 View CLI options:
 
