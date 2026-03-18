@@ -1,0 +1,68 @@
+[build-system]
+requires = [
+    "setuptools >= 62.3.0",
+    "wheel >= 0.29.0",
+]
+build-backend = 'setuptools.build_meta'
+
+[project]
+name = 'tool_name'
+dynamic = ['version','readme']
+description = "TODO: replace with a one-line tool description"
+authors = [
+    # TODO: replace with the tool authors and keep in sync with CITATION.cff
+    {name = "Samarth Mathur", email = "samarth.mathur@nih.gov"},
+    {name = "Kelly Sovacool", email = "kelly.sovacool@nih.gov"},
+    {name = "Vishal Koparde", email = "vishal.koparde@nih.gov"}
+]
+maintainers = [
+    {name = "CCR Collaborative Bioinformatics Resource", email = "ccbr@mail.nih.gov"},
+]
+license = {file = "LICENSE"}
+classifiers = [
+    "Environment :: Console",
+    "Environment :: MacOS X",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT license",
+    "Natural Language :: English",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS :: MacOS X",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+requires-python = ">=3.11"
+dependencies = [
+    "rich",
+    "ccbr_tools@git+https://github.com/CCBR/Tools@v0.4",
+    "Click >= 8.1.3",
+    "HTSeq",
+    "numpy",
+    "snakemake >= 7.32, < 8"
+]
+
+[project.optional-dependencies]
+dev = [
+    "black >= 22.0.0",
+    "pre-commit"
+]
+test = [
+    "pytest"
+]
+
+[project.scripts]
+tool_name = "tool_name.src.tool_name.__main__:main"
+
+[project.urls]
+Repository = "https://github.com/CCBR/tool_name" # TODO: update to the final repository URL
+
+[tool.setuptools.package-dir]
+tool_name = "."
+
+[tool.setuptools.package-data]
+"*" = ["CITATION.cff", "LICENSE", "VERSION", "resources/**", "bin/**", "config/**", "workflow/**", ".tests/**"]
+
+[tool.setuptools.dynamic]
+version = {file = "VERSION"}
+readme = {file = "README.md"}

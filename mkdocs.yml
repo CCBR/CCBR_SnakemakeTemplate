@@ -1,15 +1,15 @@
 # Project Information
-site_name: PIPELINENAME Pipeline
-site_author: Samantha Sevilla, Ph.D.
+site_name: TOOL_NAME # TODO: replace with the final tool name used in docs and packaging metadata
+site_author: CCR Collaborative Bioinformatics Resource
 site_description: >-
-  PIPELINENAME Pipeline
+  insert a one-line description of TOOL_NAME here # TODO: replace with the final tool summary
 # Repository
-repo_name: CCBR/PIPELINENAME
-repo_url: https://github.com/CCBR/PIPELINENAME
-edit_uri: https://github.com/CCBR/PIPELINENAME/edit/main/docs/
+repo_name: CCBR/TOOL_NAME # TODO: update to the final GitHub org/repo
+repo_url: https://github.com/CCBR/TOOL_NAME # TODO: update to the final repository URL
+edit_uri: https://github.com/CCBR/TOOL_NAME/edit/main/docs/ # TODO: update if the default branch or repo path differs
 
 # Copyright
-copyright: Copyright &copy; 2022 CCBR
+copyright: Copyright &copy; 2026 CCR Collaborative Bioinformatics Resource
 
 # Configuration
 theme:
@@ -18,7 +18,7 @@ theme:
     - navigation.tabs
     - navigation.top
     - navigation.indexes
-    - toc.integrate 
+    - toc.integrate
   palette:
     - scheme: default
       primary: indigo
@@ -39,7 +39,10 @@ plugins:
   - git-revision-date
   - minify:
       minify_html: true
-
+  - mike:
+      alias_type: symlink
+      canonical_version: latest
+      version_selector: true
 
 # Customization
 extra:
@@ -53,7 +56,6 @@ extra:
   version:
     provider: mike
 
-
 # Extensions
 markdown_extensions:
   - markdown.extensions.admonition
@@ -66,8 +68,6 @@ markdown_extensions:
       permalink: true
   - pymdownx.arithmatex:
       generic: true
-  - pymdownx.betterem:
-      smart_enable: all
   - pymdownx.caret
   - pymdownx.critic
   - pymdownx.details
@@ -93,13 +93,15 @@ markdown_extensions:
 
 # Page Tree
 nav:
-  - Background : index.md
-  - Usage: 
-    - 1. Getting Started : user-guide/getting-started.md
-    - 2. Preparing Files: user-guide/preparing-files.md
-    - 3. Running the Pipeline: user-guide/run.md
-    - 4. Expected Output: user-guide/output.md
-    - 5. Running Test Data: user-guide/test-info.md
+  - Background: index.md
+  - Usage:
+      - 1. Getting Started: user-guide/getting-started.md
+      - 2. Preparing Files: user-guide/preparing-files.md
+      - 3. Running the Pipeline: user-guide/run.md
+      - 4. Expected Output: user-guide/output.md
+      - 5. Running Test Data: user-guide/test-info.md
+      - Troubleshooting: user-guide/troubleshooting.md
   - FAQ:
-    - Troubleshooting: user-guide/troubleshooting.md
-    - Contributions: user-guide/contributions.md
+      - How to contribute: contributing.md
+      - Contributors: contributors.md
+  - Changelog: changelog.md

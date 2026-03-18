@@ -3,3 +3,5 @@
 !.gitignore
 !.gitattributes
 site/
+__pycache__/
+*.egg-info/
