@@ -1,4 +1,5 @@
 # Data Set 1 (Partial)
+
 - Effective: [date]
 - Species: [Homo Sapiens]
 - Datatype: [RNA-Seq]
@@ -9,6 +10,7 @@
 - Path of scripts used to subset or otherwise manipulate inputs
 
 # Data Set 2 (High Quality)
+
 - Effective: [date]
 - Species: [Homo Sapiens]
 - Datatype: [RNA-Seq]
@@ -19,6 +21,7 @@
 - Path of scripts used to subset or otherwise manipulate inputs
 
 # Data Set 3 (Expected Quality)
+
 - Effective: [date]
 - Species: [Homo Sapiens]
 - Datatype: [RNA-Seq]
