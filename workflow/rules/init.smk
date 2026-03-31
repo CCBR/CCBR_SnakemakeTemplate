@@ -11,7 +11,7 @@ import yaml
 
 
 #########################################################
-# FILE-ACTION FUNCTIONS 
+# FILE-ACTION FUNCTIONS
 #########################################################
 def check_existence(filename):
   if not os.path.exists(filename):
@@ -38,7 +38,7 @@ def get_file_size(filename):
 #########################################################
 CONFIGFILE = str(workflow.overwrite_configfiles[0])
 
-# set memory limit 
+# set memory limit
 # used for sambamba sort, etc
 # MEMORYG="100G"
 

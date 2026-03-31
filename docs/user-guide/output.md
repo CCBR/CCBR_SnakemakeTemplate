@@ -1,6 +1,7 @@
 This should include all pertitant information about output files, including extensions that differentiate files. An example is provided below.
 
 # 4. Expected Outputs
+
 The following directories are created under the WORKDIR/results directory:
 
 - alignment_stats: this directory include information on the alignment of each sample

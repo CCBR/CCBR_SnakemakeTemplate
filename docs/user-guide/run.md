@@ -3,7 +3,9 @@ This should include all information about the various run commands provided with
 # 3. Running the Pipeline
 
 ## 3.1 Pipeline Overview
+
 The Snakemake workflow has a multiple options:
+
 ```
 Usage: bash ./data/CCBR_Pipeliner/Pipelines/CARLISLE/carlisle -m/--runmode=<RUNMODE> -w/--workdir=<WORKDIR>
 1.  RUNMODE: [Type: String] Valid options:
@@ -18,6 +20,7 @@ Usage: bash ./data/CCBR_Pipeliner/Pipelines/CARLISLE/carlisle -m/--runmode=<RUNM
 ```
 
 ## 3.2 Commands explained
+
 The following explains each of the command options:
 
 - Preparation Commands
@@ -31,12 +34,15 @@ The following explains each of the command options:
     - testrun: This will run a test of the pipeline with test data
 
 To run any of these commands, follow the the syntax:
+
 ```
 bash ./data/CCBR_Pipeliner/Pipelines/CARLISLE/carlisle --runmode=COMMAND --workdir=/path/to/output/dir
 ```
 
 ## 3.3 Typical Workflow
+
 A typical command workflow, running on the cluser, is as follows:
+
 ```
 bash ./data/CCBR_Pipeliner/Pipelines/CARLISLE/carlisle --runmode=init --workdir=/path/to/output/dir
 
