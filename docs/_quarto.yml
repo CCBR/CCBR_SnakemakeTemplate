@@ -1,0 +1,64 @@
+project:
+  type: website
+  output-dir: _site
+  render:
+    - "*.md"
+    - "user-guide/*.md"
+
+website:
+  title: "PIPELINENAME Pipeline"
+  description: "PIPELINENAME Pipeline"
+  site-url: https://ccbr.github.io/PIPELINENAME
+  repo-url: https://github.com/CCBR/PIPELINENAME
+  repo-subdir: docs
+  repo-branch: main
+  repo-actions: [edit, source, issue]
+  search:
+    location: sidebar
+  navbar:
+    left:
+      - text: Home
+        href: index.md
+      - text: User Guide
+        href: user-guide/getting-started.md
+      - text: FAQ
+        href: user-guide/troubleshooting.md
+    right:
+      - icon: github
+        href: https://github.com/CCBR/PIPELINENAME
+  sidebar:
+    style: docked
+    contents:
+      - href: index.md
+        text: Background
+      - section: Usage
+        contents:
+          - href: user-guide/getting-started.md
+            text: 1. Getting Started
+          - href: user-guide/preparing-files.md
+            text: 2. Preparing Files
+          - href: user-guide/run.md
+            text: 3. Running the Pipeline
+          - href: user-guide/output.md
+            text: 4. Expected Output
+          - href: user-guide/test-info.md
+            text: 5. Running Test Data
+      - section: FAQ
+        contents:
+          - href: user-guide/troubleshooting.md
+            text: Troubleshooting
+          - href: user-guide/contributions.md
+            text: Contributions
+  page-footer:
+    left: |
+      Copyright &copy; 2022-2026 CCBR
+
+filters:
+  - version-selector
+version-selector:
+  placement: navbar-left
+
+format:
+  fnl-html:
+    toc: true
+    code-copy: true
