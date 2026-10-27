@@ -1,2 +1,3 @@
 *.smk linguist-language=Python
 *.snakefile linguist-language=Python
+pixi.lock merge=binary linguist-language=YAML linguist-generated=true -diff

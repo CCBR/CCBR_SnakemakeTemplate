@@ -1,0 +1,16 @@
+[workspace]
+name = "PIPELINENAME"
+channels = ["conda-forge"]
+platforms = ["osx-arm64", "linux-64"]
+
+[dependencies]
+quarto = ">=1.9,<2"
+
+[pypi-dependencies]
+quarto-version-selector = { git = "https://github.com/CCBR/quarto-version-selector.git", branch = "main" }
+
+[tasks]
+docs-render = "quarto render docs"
+docs-preview = "quarto preview docs"
+docs-serve = { cmd = "quarto-version-selector serve --site-dir docs/_site", depends-on = ["docs-render"] }
+docs-update-extensions = { cmd = "quarto update extension CCBR/quarto-fnl --no-prompt && quarto update extension CCBR/quarto-version-selector --no-prompt", cwd = "docs" }
